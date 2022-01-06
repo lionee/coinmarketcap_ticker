@@ -30,13 +30,16 @@ if __name__ == '__main__':
 
     # Read data from provided url, parse it and put into variable
     data = get_data(url)
-    text = data[4].text.strip() + " #" + re.sub("\D", "", data[0].text.strip()) + "; Watching: " + re.sub("\D", "", data[2].text.strip())
+    text1 = data[4].text.strip()
+    text2 = " #" + re.sub("\D", "", data[0].text.strip())
+    text3 = " Watching: " + re.sub("\D", "", data[2].text.strip())
 
     # Set layout for window
     # Just simple one line without any buttons
     layout = [
-        [sg.Text(text, key='text1', pad=(0, 0), font=('Arial', 10, 'bold'))],
-        #[sg.Button(".")]
+        [sg.Text(text1, key='text1', pad=(0, 0), font=('Arial', 10, 'bold'), background_color='#333333'),
+         sg.Text(text2, key='text2', pad=(0, 0), font=('Arial', 10, 'bold'), background_color='#333333'),
+         sg.Text(text3, key='text3', pad=(0, 0), font=('Arial', 10, 'bold'), background_color='#333333')]
     ]
 
     # Put window on top of the screen
@@ -44,16 +47,40 @@ if __name__ == '__main__':
     # Right mouse click to close app
     window = sg.Window("Coinmarketcap ticker", layout, location=(w/2-100,0), no_titlebar=True, keep_on_top=True, grab_anywhere=True, margins=(0,0), finalize=True)
     window['text1'].bind('<Button-3>', '+RIGHT CLICK+')
+    window['text2'].bind('<Button-3>', '+RIGHT CLICK+')
+    window['text3'].bind('<Button-3>', '+RIGHT CLICK+')
+    data = get_data(url)
+    last_price = re.sub("\D", "", data[4].text.strip())
+    last_pos = re.sub("\D", "", data[0].text.strip())
 
     # Main loop
     while True:
 
-        event, values = window.read(timeout=30000)
+        event, values = window.read(timeout=10000)
         data = get_data(url)
-        text = data[4].text.strip() +" #" + re.sub("\D","",data[0].text.strip()) + "; Watching: " + re.sub("\D","",data[2].text.strip())
-        window['text1'].update(text)
-        print(event)
-        if event == "text1+RIGHT CLICK+" or event == sg.WIN_CLOSED:
+        text1 = data[4].text.strip()
+        text2 = " #" + re.sub("\D","",data[0].text.strip())
+        text3 = " Watching: " + re.sub("\D","",data[2].text.strip())
+        window['text1'].update(text1)
+        window['text2'].update(text2)
+        window['text3'].update(text3)
+
+        # Change color to red if price is lower and to green if price is higher
+        if int(last_price) < int(re.sub("\D","",data[4].text.strip())):
+            window['text1'].update(text_color='#55FF55')
+        if int(last_price) > int(re.sub("\D", "", data[4].text.strip())):
+            window['text1'].update(text_color='#FF5555')
+
+        # Change color to red if position is lower and to green if price is higher
+        if int(last_pos) < int(re.sub("\D","",data[0].text.strip())):
+            window['text2'].update(text_color='#55FF55')
+        if int(last_pos) > int(re.sub("\D", "", data[0].text.strip())):
+            window['text2'].update(text_color='#FF5555')
+
+
+        last_price = re.sub("\D", "", data[4].text.strip())
+        last_pos = re.sub("\D", "", data[0].text.strip())
+        if event == "text1+RIGHT CLICK+" or event == "text2+RIGHT CLICK+" or event == "text3+RIGHT CLICK+" or event == sg.WIN_CLOSED:
             break
 
 
