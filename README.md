@@ -1,6 +1,6 @@
 # coinmarketcap_ticker
 Coinmarketcap ticker
-App to gather data from coinmarketcap for selected cryptocurrency and presenting it as small neat bar, which can be placed anywhere on screen (left mouse drag) and stopped by right click.
+is app to gather data from coinmarketcap for selected cryptocurrency and presenting it as small neat bar, which can be placed anywhere on screen (left mouse drag) and stopped by right click.
  
 You need url.txt file containing selected cryptocurrency from coinmarketcap
 eg. https://coinmarketcap.com/currencies/ethereum/
