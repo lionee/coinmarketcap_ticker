@@ -56,7 +56,7 @@ if __name__ == '__main__':
     # Main loop
     while True:
 
-        event, values = window.read(timeout=10000)
+        event, values = window.read(timeout=30000)
         data = get_data(url)
         text1 = data[4].text.strip()
         text2 = " #" + re.sub("\D","",data[0].text.strip())
@@ -73,9 +73,9 @@ if __name__ == '__main__':
 
         # Change color to red if position is lower and to green if price is higher
         if int(last_pos) < int(re.sub("\D","",data[0].text.strip())):
-            window['text2'].update(text_color='#55FF55')
-        if int(last_pos) > int(re.sub("\D", "", data[0].text.strip())):
             window['text2'].update(text_color='#FF5555')
+        if int(last_pos) > int(re.sub("\D", "", data[0].text.strip())):
+            window['text2'].update(text_color='#55FF55')
 
 
         last_price = re.sub("\D", "", data[4].text.strip())
