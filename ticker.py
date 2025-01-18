@@ -16,9 +16,6 @@ import json
 def get_data(slug):
     url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest'
     parameters = {
-        # 'start': '1',
-        # 'id': '5350',
-        # 'limit': '5000',
         'slug': slug,
         'convert': 'USD'
     }
@@ -34,9 +31,7 @@ def get_data(slug):
         response = session.get(url, params=parameters)
         data = json.loads(response.text)
         k = list(data['data'].keys())
-        #pprint.pprint(data['data'].g)
-        pprint.pprint(data['data'])
-        #pprint.pprint(data['data']['5350']['quote']['USD']['price'])
+        #pprint.pprint(data['data'])
         rank = data['data'][k[0]]['cmc_rank']
         price = data['data'][k[0]]['quote']['USD']['price']
 
@@ -45,9 +40,9 @@ def get_data(slug):
     return round(price, 6), rank
 
 if __name__ == '__main__':
-    # Read coinmarketcap URL from file "url.txt" in working directory
-    # eg. https://coinmarketcap.com/currencies/ethereum/
-    # Url can be selected among all available crypto in coinmarketcap
+    # Read currency name  from file "url.txt" in working directory
+    # eg. bitcoin
+
     locale.setlocale(locale.LC_ALL, 'en_US')
     f = open("url.txt", "r")
     slug = f.read()
@@ -56,14 +51,9 @@ if __name__ == '__main__':
     # Get screen size
     w, h = sg.Window.get_screen_size()
 
-    # Read data from provided url, parse it and put into variable
-    #print(get_data(slug))
-
     text1 = slug.upper() + ": "
     text2 = "$" + str(get_data(slug)[0])
     text3 = " #" + str(get_data(slug)[1])
-    #text3 = " Watching: " + re.sub("\\D", "", data[2].text.strip())
-    #text4 = "Mcap: $" + locale.format_string("%d", int(re.sub("\\D", "", data[5].text.strip())), grouping=True)
 
     # Set layout for window
     # Just simple one line without any buttons
@@ -73,7 +63,7 @@ if __name__ == '__main__':
          sg.Text(text3, key='coinmarketcap_position', pad=(0, 0), font=('Arial', 10, 'bold'), background_color='#333333')]
     ]
 
-    # Put window on top of the screen
+    # Put window on top of the screen in middle
     # No title bar, always on top
     # Right mouse click to close app
     window = sg.Window("Coinmarketcap ticker", layout, location=(w/2-100,0), no_titlebar=True, keep_on_top=True, grab_anywhere=True, margins=(0,0), finalize=True)
@@ -90,16 +80,13 @@ if __name__ == '__main__':
     while True:
 
         event, values = window.read(timeout=30000)
-
         text1 = get_data(slug)[0]
         text2 = " #" + str(get_data(slug)[1])
 
         window['price'].update(text1)
         window['coinmarketcap_position'].update(text2)
 
-
-        #Change color to red if price is lower and to green if price is higher
-
+        # Change color to red if price is lower and to green if price is higher
         if int(last_price) < get_data(slug)[0]:
             window['price'].update(text_color='#55FF55')
         if int(last_price) > get_data(slug)[0]:
@@ -110,8 +97,6 @@ if __name__ == '__main__':
             window['price'].update(text_color='#FF5555')
         if int(last_pos) > get_data(slug)[1]:
             window['coinmarketcap_position'].update(text_color='#55FF55')
-
-
 
         last_price = get_data(slug)[0]
         last_pos = get_data(slug)[1]
