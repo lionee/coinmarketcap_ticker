@@ -21,7 +21,7 @@ def get_data(slug):
     }
     headers = {
         'Accepts': 'application/json',
-        'X-CMC_PRO_API_KEY': '',  #  <------- PUT YOUR API KEY here!!
+        'X-CMC_PRO_API_KEY': '',  #  <------- PUT YOUR COINMARKEYCAP.COM API KEY here!!
     }
 
     session = Session()
