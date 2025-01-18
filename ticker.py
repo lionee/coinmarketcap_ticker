@@ -86,23 +86,30 @@ if __name__ == '__main__':
     while True:
 
         event, values = window.read(timeout=refresh_rate)
-        text1 = get_data(slug)[0]
-        text2 = " #" + str(get_data(slug)[1])
+        text2 = "$" + str(get_data(slug)[0])
+        text3 = " #" + str(get_data(slug)[1])
 
-        window['price'].update(text1)
-        window['coinmarketcap_position'].update(text2)
+        current_price = get_data(slug)[0]
+        current_pos = get_data(slug)[1]
+
+        window['price'].update(text2)
+        window['coinmarketcap_position'].update(text3)
 
         # Change color to red if price is lower and to green if price is higher
-        if int(last_price) < get_data(slug)[0]:
+        if float(last_price) < float(current_price):
             window['price'].update(text_color='#55FF55')
-        if int(last_price) > get_data(slug)[0]:
-            window['coinmarketcap_position'].update(text_color='#FF5555')
+        elif float(last_price) < float(current_price):
+            window['price'].update(text_color='#FF5555')
+        elif float(last_price) == float(current_price):
+            window['price'].update(text_color='#EEEEEE')
 
         # Change color to red if position is lower and to green if price is higher
-        if int(last_pos) < get_data(slug)[1]:
-            window['price'].update(text_color='#FF5555')
-        if int(last_pos) > get_data(slug)[1]:
+        if float(last_pos) < float(current_pos):
+            window['coinmarketcap_position'].update(text_color='#FF5555')
+        elif float(last_pos) < float(current_pos):
             window['coinmarketcap_position'].update(text_color='#55FF55')
+        elif float(last_pos) == float(current_pos):
+            window['coinmarketcap_position'].update(text_color='#EEEEEE')
 
         last_price = get_data(slug)[0]
         last_pos = get_data(slug)[1]
