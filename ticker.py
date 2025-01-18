@@ -5,11 +5,11 @@
 # Daniel Czerniawski 06.01.2022
 
 import locale
-import pprint
 import PySimpleGUI as sg
-from requests import Request, Session
+from requests import Session
 from requests.exceptions import ConnectionError, Timeout, TooManyRedirects
 import json
+import configparser
 
 
 
@@ -21,7 +21,7 @@ def get_data(slug):
     }
     headers = {
         'Accepts': 'application/json',
-        'X-CMC_PRO_API_KEY': '',  #  <------- PUT YOUR COINMARKEYCAP.COM API KEY here!!
+        'X-CMC_PRO_API_KEY': api_key,
     }
 
     session = Session()
@@ -40,13 +40,19 @@ def get_data(slug):
     return round(price, 6), rank
 
 if __name__ == '__main__':
-    # Read currency name  from file "url.txt" in working directory
-    # eg. bitcoin
+
+
+    # Read config from config.cfg
+    # Put your API-KEY there
+
+    config = configparser.ConfigParser()
+    config.read('config.cfg')
+
+    api_key = config['DEFAULT']['api_key']
+    slug = config['DEFAULT']['currency']
+    refresh_rate = config['DEFAULT']['refresh_rate']
 
     locale.setlocale(locale.LC_ALL, 'en_US')
-    f = open("url.txt", "r")
-    slug = f.read()
-    f.close()
 
     # Get screen size
     w, h = sg.Window.get_screen_size()
@@ -79,7 +85,7 @@ if __name__ == '__main__':
     # Main loop
     while True:
 
-        event, values = window.read(timeout=30000)
+        event, values = window.read(timeout=refresh_rate)
         text1 = get_data(slug)[0]
         text2 = " #" + str(get_data(slug)[1])
 
