@@ -6,6 +6,6 @@ You need to generate API key on coinmarketcap and put it in config.cfg
  
 Bar shows info like below:
 
-$0.01683 #353; Watching: 48310
+![ScreenShot](https://github.com/lionee/coinmarketcap_ticker/blob/master/cmc.png)
 
 Minimalism...
