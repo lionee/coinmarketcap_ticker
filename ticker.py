@@ -46,11 +46,14 @@ if __name__ == '__main__':
     # Put your API-KEY there
 
     config = configparser.ConfigParser()
-    config.read('config.cfg')
-
-    api_key = config['DEFAULT']['api_key']
-    slug = config['DEFAULT']['currency']
-    refresh_rate = config['DEFAULT']['refresh_rate']
+    try:
+        config.read('config.cfg')
+        api_key = config['DEFAULT']['api_key']
+        slug = config['DEFAULT']['currency']
+        refresh_rate = config['DEFAULT']['refresh_rate']
+    except (KeyError, ValueError, FileNotFoundError) as e:
+        print(f"Configuration error: {e}")
+        exit(1)
 
     locale.setlocale(locale.LC_ALL, 'en_US')
 
@@ -78,19 +81,20 @@ if __name__ == '__main__':
     window['coinmarketcap_position'].bind('<Button-3>', '+RIGHT CLICK+')
 
     data = get_data(slug)
-    last_price = get_data(slug)[0]
-    last_pos = get_data(slug)[1]
+    last_price, last_pos = data
+
 
 
     # Main loop
     while True:
 
         event, values = window.read(timeout=refresh_rate)
-        text2 = "$" + str(get_data(slug)[0])
-        text3 = " #" + str(get_data(slug)[1])
 
-        current_price = get_data(slug)[0]
-        current_pos = get_data(slug)[1]
+        data = get_data(slug)
+        current_price, current_pos = data
+
+        text2 = "$" + str(current_price)
+        text3 = " #" + str(current_pos)
 
         window['price'].update(text2)
         window['coinmarketcap_position'].update(text3)
@@ -98,7 +102,7 @@ if __name__ == '__main__':
         # Change color to red if price is lower and to green if price is higher
         if float(last_price) < float(current_price):
             window['price'].update(text_color='#55FF55')
-        elif float(last_price) < float(current_price):
+        elif float(last_price) > float(current_price):
             window['price'].update(text_color='#FF5555')
         elif float(last_price) == float(current_price):
             window['price'].update(text_color='#EEEEEE')
@@ -106,13 +110,13 @@ if __name__ == '__main__':
         # Change color to red if position is lower and to green if price is higher
         if float(last_pos) < float(current_pos):
             window['coinmarketcap_position'].update(text_color='#FF5555')
-        elif float(last_pos) < float(current_pos):
+        elif float(last_pos) > float(current_pos):
             window['coinmarketcap_position'].update(text_color='#55FF55')
         elif float(last_pos) == float(current_pos):
             window['coinmarketcap_position'].update(text_color='#EEEEEE')
 
-        last_price = get_data(slug)[0]
-        last_pos = get_data(slug)[1]
+        last_price = current_price
+        last_pos = current_pos
 
         if event == "currency_name+RIGHT CLICK+" or event == "price+RIGHT CLICK+" or event == "coinmarketcap_position+RIGHT CLICK+" or event == sg.WIN_CLOSED:
             break
