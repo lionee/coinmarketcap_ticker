@@ -51,18 +51,20 @@ if __name__ == '__main__':
         api_key = config['DEFAULT']['api_key']
         slug = config['DEFAULT']['currency']
         refresh_rate = config['DEFAULT']['refresh_rate']
+        amount = float(config['DEFAULT']['amount'])
     except (KeyError, ValueError, FileNotFoundError) as e:
         print(f"Configuration error: {e}")
         exit(1)
 
-    text1, text2, text3 = "", "Connecting ...", ""
+    text1, text2, text3, text4 = "", "Connecting ...", "", ""
 
     # Set layout for window
     # Just simple one line without any buttons
     layout = [
         [sg.Text(text1, key='currency_name', pad=(0, 0), font=('Arial', 10, 'bold'), background_color='#333333'),
          sg.Text(text2, key='price', pad=(0, 0), font=('Arial', 10, 'bold'), background_color='#333333'),
-         sg.Text(text3, key='coinmarketcap_position', pad=(0, 0), font=('Arial', 10, 'bold'), background_color='#333333')]
+         sg.Text(text3, key='coinmarketcap_position', pad=(0, 0), font=('Arial', 10, 'bold'), background_color='#333333'),
+         sg.Text(text4, key='current_amount_value', pad=(0, 0), font=('Arial', 10, 'bold'), background_color='#333333')]
     ]
     # Get screen size
     w, h = sg.Window.get_screen_size()
@@ -74,6 +76,7 @@ if __name__ == '__main__':
     window['currency_name'].bind('<Button-3>', '+RIGHT CLICK+')
     window['price'].bind('<Button-3>', '+RIGHT CLICK+')
     window['coinmarketcap_position'].bind('<Button-3>', '+RIGHT CLICK+')
+    window['current_amount_value'].bind('<Button-3>', '+RIGHT CLICK+')
 
     event, values = window.read(timeout=1000)
 
@@ -81,7 +84,11 @@ if __name__ == '__main__':
     while True:
         try:
             data = get_data(slug)
+
             current_price, current_pos = data
+
+            #print(current_amount_value)
+
         except:
             window['price'].update(text_color='#FF5555')
             window['coinmarketcap_position'].update(text_color='#FF5555')
@@ -91,14 +98,22 @@ if __name__ == '__main__':
             text1 = ""
             text2 = last_price
             text3 = last_pos
+            text4 = ""
             pass
         else:
             text1 = slug.upper() + ": "
             text2 = "$" + str(current_price)
             text3 = " #" + str(current_pos)
+            if int(amount) != 0:
+                print(amount)
+                current_amount_value = round(float(amount) * float(current_price), 2)
+                text4 = "$" + str(current_amount_value)
+            else:
+                text4 = ""
         window['currency_name'].update(text1)
         window['price'].update(text2)
         window['coinmarketcap_position'].update(text3)
+        window['current_amount_value'].update(text4)
 
         # Change color to red if price is lower and to green if price is higher
         try:
@@ -125,7 +140,8 @@ if __name__ == '__main__':
         last_price = current_price
         last_pos = current_pos
 
-        if event == "currency_name+RIGHT CLICK+" or event == "price+RIGHT CLICK+" or event == "coinmarketcap_position+RIGHT CLICK+" or event == sg.WIN_CLOSED:
+
+        if event == "currency_name+RIGHT CLICK+" or event == "price+RIGHT CLICK+" or event == "coinmarketcap_position+RIGHT CLICK+" or event == "current_amount_value+RIGHT CLICK+" or event == sg.WIN_CLOSED:
             break
         event, values = window.read(timeout=refresh_rate)
 
