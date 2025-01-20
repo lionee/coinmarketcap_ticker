@@ -107,7 +107,7 @@ if __name__ == '__main__':
             if int(amount) != 0:
                 print(amount)
                 current_amount_value = round(float(amount) * float(current_price), 2)
-                text4 = "$" + str(current_amount_value)
+                text4 = " $" + str(current_amount_value)
             else:
                 text4 = ""
         window['currency_name'].update(text1)
