@@ -131,7 +131,7 @@ if __name__ == '__main__':
 
         try:
             switch_colors(last_price, current_price, window['price'])
-            switch_colors(last_pos, current_pos, window['coinmarketcap_position'])
+            switch_colors(current_pos, last_pos, window['coinmarketcap_position']) #Here we do opposite way - green if lower
             switch_colors(last_value, current_amount_value, window['current_amount_value'])
         except:
             pass
